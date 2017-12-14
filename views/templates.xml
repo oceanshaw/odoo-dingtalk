@@ -1,0 +1,43 @@
+<openerp>
+    <data>
+        <template id="home">
+<html>
+<head>
+            <script type="text/javascript" src="//apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>
+            <script type="text/javascript" src="//g.alicdn.com/dingding/dingtalk-pc-api/2.3.1/index.js"></script>
+            <script type="text/javascript">
+                var _config = {
+                    'agentId':<t t-esc="agentId"/>,
+                    'corpId':'<t t-esc="corpId"/>',
+                    'timeStamp':<t t-esc="timeStamp"/>,
+                    'nonceStr':'<t t-esc="nonceStr"/>',
+                    'signature':'<t t-esc="signature"/>'
+                }
+            </script>
+            <script type="text/javascript" src="/dingtalk/static/src/js/app.js?v=2017"></script>
+            <input type="hidden" id="csrf_token" t-att-value="request.csrf_token()"/>
+            <p>加载中，请稍候...</p>
+    </head>
+            </html>
+        </template>
+
+        <!-- <template id="listing"> -->
+        <!--   <ul> -->
+        <!--     <li t-foreach="objects" t-as="object"> -->
+        <!--       <a t-attf-href="#{ root }/objects/#{ object.id }"> -->
+        <!--         <t t-esc="object.display_name"/> -->
+        <!--       </a> -->
+        <!--     </li> -->
+        <!--   </ul> -->
+        <!-- </template> -->
+        <!-- <template id="object"> -->
+        <!--   <h1><t t-esc="object.display_name"/></h1> -->
+        <!--   <dl> -->
+        <!--     <t t-foreach="object._fields" t-as="field"> -->
+        <!--       <dt><t t-esc="field"/></dt> -->
+        <!--       <dd><t t-esc="object[field]"/></dd> -->
+        <!--     </t> -->
+        <!--   </dl> -->
+        <!-- </template> -->
+    </data>
+</openerp>

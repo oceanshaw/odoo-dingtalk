@@ -1,0 +1,44 @@
+<openerp>
+    <data>
+        
+        <!--扩展部门，增加钉钉ID字段-->
+        <record id="view_hr_department_ding_form" model="ir.ui.view">
+            <field name="name">view.hr.department.ding.form</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="after">
+                    <group string="钉钉" col="4">
+                        <field name="dingtalk_id" />
+                        <field name="dingtalk_create_deptgroup" />
+                        <field name="dingtalk_auto_adduser" />
+                        <field name="dingtalk_order" />
+                        <field name="dingtalk_dept_hiding" />
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        
+        <!--扩展员工，增加钉钉ID字段-->
+        <record id="view_hr_employee_ding_form" model="ir.ui.view">
+            <field name="name">view.hr.employee.ding.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='public']" position="after">
+                    <page string="钉钉">
+                        <group>
+                            <group>
+                                <field name="dingtalk_userid" />
+                                <field name="dingtalk_admin" />
+                            </group>
+
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+        
+    </data>
+</openerp>

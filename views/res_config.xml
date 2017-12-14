@@ -1,0 +1,44 @@
+<odoo>
+	<data>
+
+		<record id="view_dingtalk_configuration" model="ir.ui.view">
+			<field name="name">view.dingtalk.configuration</field>
+			<field name="model">dingtalk.config.settings</field>
+			<field name="arch" type="xml">
+				<form string="Configure dingtalk" class="oe_form_configuration">
+					<header>
+						<button string="确认" type="object" name="execute" class="oe_highlight"/>
+						<button string="取消" type="object" name="cancel" class="oe_link" />
+					</header>
+					<group string="企业应用配置">
+						<group>
+							<field name="corpid" />
+							<field name="corpsecret" />
+							<field name="sso_secret" />
+							<field name="agentid" />
+							<field name="noncestr"/>
+						</group>
+					</group>
+
+					<group string="操作">
+						<label for="id" string="更新部门列表"/>
+                        <div>
+                            <div>
+                                <button type="object" name="get_department_list" string="执行" class="oe_link btn-link"/>
+                            </div>
+                        </div>
+					</group>
+					
+				</form>
+			</field>
+		</record>
+
+		<record id="action_dingtalk_configuration" model="ir.actions.act_window">
+            <field name="name">Configure dingtalk</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dingtalk.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+	</data>
+</odoo>

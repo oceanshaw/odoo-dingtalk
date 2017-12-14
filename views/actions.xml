@@ -1,0 +1,27 @@
+<openerp>
+    <data>
+        
+
+    <!-- Top menu item -->
+        <menuitem name="钉钉" id="dingtalk.menu_root"
+            web_icon="dingtalk,static/description/icon.png"/>
+
+    <!-- menu categories -->
+        <menuitem name="管理" id="dingtalk.menu_manage" parent="dingtalk.menu_root"/>
+
+        <menuitem name="配置" id="dingtalk.menu_setting" parent="dingtalk.menu_root"/>
+
+
+        <menuitem name="设置"
+			id="menu_dingtalk_settings" parent="dingtalk.menu_setting"
+			sequence="10" action="action_dingtalk_configuration"/>
+
+
+        <menuitem name="部门"
+			id="menu_dingtalk_departments" parent="dingtalk.menu_manage"
+			sequence="10" action="action_dingtalk_departments"/>
+        <menuitem name="员工"
+			id="menu_dingtalk_employees" parent="dingtalk.menu_manage"
+			sequence="10" action="action_dingtalk_employees"/>
+    </data>
+</openerp>

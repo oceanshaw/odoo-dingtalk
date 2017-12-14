@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+
+        <!-- 部门视图 -->
+        <record model="ir.actions.act_window" id="action_dingtalk_departments">
+			<field name="name">部门</field>
+			<field name="res_model">hr.department</field>
+			<field name="view_mode">tree</field>
+		</record>
+
+        <!-- 员工视图 -->
+        <record model="ir.actions.act_window" id="action_dingtalk_employees">
+			<field name="name">员工</field>
+			<field name="res_model">hr.employee</field>
+			<field name="view_mode">tree</field>
+		</record>
+
+    </data>
+</odoo>

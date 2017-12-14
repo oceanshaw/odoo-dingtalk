@@ -1,0 +1,82 @@
+<odoo>
+	<data>
+
+
+<!-- 获取部门详情 -->
+		<record id="action_dingtalk_get_department_detail" model="ir.actions.server">
+            <field name="name">同步部门详情</field>
+            <field name="model_id" ref="model_hr_department"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    action = records.dingtalk_get_department_detail()
+            </field>
+        </record>
+
+        <record id="ir_dingtalk_get_department_detail" model="ir.values">
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'hr.department'" name="model"/>
+            <field name="name">同步部门详情</field>
+            <field eval="'ir.actions.server,%d'%action_dingtalk_get_department_detail" name="value"/>
+        </record>
+
+
+<!-- 获取部门成员详情 -->
+        <record id="action_dingtalk_get_dept_user_list" model="ir.actions.server">
+            <field name="name">同步部门成员</field>
+            <field name="model_id" ref="model_hr_department"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    action = records.dingtalk_get_dept_user_list()
+            </field>
+        </record>
+
+        <record id="ir_dingtalk_get_dept_user_list" model="ir.values">
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'hr.department'" name="model"/>
+            <field name="name">同步部门成员</field>
+            <field eval="'ir.actions.server,%d'%action_dingtalk_get_dept_user_list" name="value"/>
+        </record>
+
+
+<!-- 创建部门 -->
+        <record id="action_dingtalk_create_update_department" model="ir.actions.server">
+            <field name="name">创建/更新部门</field>
+            <field name="model_id" ref="model_hr_department"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    action = records.dingtalk_update_department()
+            </field>
+        </record>
+
+        <record id="ir_dingtalk_create_update_depart" model="ir.values">
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'hr.department'" name="model"/>
+            <field name="name">创建/更新部门</field>
+            <field eval="'ir.actions.server,%d'%action_dingtalk_create_update_department" name="value"/>
+        </record>
+
+
+<!-- 创建成员 -->
+        <record id="action_dingtalk_create_user" model="ir.actions.server">
+            <field name="name">创建/更新部门成员</field>
+            <field name="model_id" ref="model_hr_employee"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    action = records.dingtalk_create_employee()
+            </field>
+        </record>
+
+        <record id="ir_dingtalk_create_user" model="ir.values">
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'hr.employee'" name="model"/>
+            <field name="name">创建/更新部门成员</field>
+            <field eval="'ir.actions.server,%d'%action_dingtalk_create_user" name="value"/>
+        </record>
+
+
+	</data>
+</odoo>
