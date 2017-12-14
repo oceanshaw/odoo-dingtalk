@@ -2,3 +2,4 @@
 *.~
 .idea
 *.json
+cache/cache.txt
