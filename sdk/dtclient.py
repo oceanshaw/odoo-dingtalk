@@ -63,24 +63,17 @@ class DingTalkClient:
 			self.cache.add('access_token',self.access_token,7000)
 		return self.access_token
 
-	'''
-	微应用管理后台免登token
-	'''
-	def get_sso_token(self):
-		token = self.cache.get('sso_token');
-		if token:
-			self.access_token = token
-		else:
-			resp = _http_call(self.api.url_sso_token, self.corp_params)
-			self.access_token = resp['access_token']
-			self.cache.add('access_token',self.access_token, 7000)
-		return self.access_token
 
 	'''
 	通过CODE换取微应用管理员的身份信息
 	'''
 	def get_sso_userinfo(self, code):
-		params = {'access_token': self.access_token, 'code': code}
+		token = self.cache.get('sso_token');
+		if not token:
+			resp = _http_call(self.api.url_sso_token, self.corp_params)
+			token = resp['access_token']
+			self.cache.add('sso_token', token, 7000)
+		params = {'access_token': token, 'code': code}
 
 		return _http_call(self.api.url_sso_user_info, params)
 
@@ -90,9 +83,11 @@ class DingTalkClient:
 		return _http_call(self.api.url_user_info, params)
 
 	def get_jsapi_ticket(self):
-		params = {'access_token': self.access_token}
-		resp = _http_call(self.api.url_jsapi_ticket, params)
-		ticket = resp['ticket']
+		ticket = self.cache.get('jsapi_ticket');
+		if not ticket:
+			params = {'access_token': self.access_token}
+			resp = _http_call(self.api.url_jsapi_ticket, params)
+			ticket = resp['ticket']
 		return ticket
 
 	def sign(self, ticket, nonce_str, time_stamp, url):

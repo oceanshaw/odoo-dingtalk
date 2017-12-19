@@ -9,6 +9,7 @@ import hmac
 import hashlib
 import urllib2
 from dtclient import DingTalkClient
+from dingtalk import _get_client
 
 from odoo import api, fields, models
 
@@ -21,12 +22,8 @@ class DingtalkConfiguration(models.TransientModel):
 
 	corpid = fields.Char("corpid",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_corpid'))
 	corpsecret = fields.Char("corpsecret",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_corpsecret'))
-	access_token = fields.Char("access_token",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_access_token'))
-	jsapi_ticket = fields.Char("jsapi_ticket",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_jsapi_ticket'))
+	sso_secret = fields.Char("sso_secret",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings','dingtalk_sso_secret'))
 	agentid = fields.Char("agentid",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings','dingtalk_agentid'))
-	noncestr = fields.Char("noncestr",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings','dingtalk_noncestr'))
-	expirein = fields.Char("expirein",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings','dingtalk_expirein'))
-	sso_secret = fields.Char("sso_secret",default=lambda self: self.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_sso_secret'))
 
 	@api.multi
 	def set_corpid_defaults(self):
@@ -44,24 +41,13 @@ class DingtalkConfiguration(models.TransientModel):
 			'dingtalk.config.settings', 'dingtalk_sso_secret', self.sso_secret)
 
 	@api.multi
-	def set_access_token_defaults(self):
-		return self.env['ir.values'].sudo().set_default(
-			'dingtalk.config.settings', 'dingtalk_access_token', self.access_token)
-
-	@api.multi
 	def set_agentid_defaults(self):
 		return self.env['ir.values'].sudo().set_default(
 			'dingtalk.config.settings', 'dingtalk_agentid', self.agentid)
 
 	@api.multi
-	def set_noncestr_defaults(self):
-		return self.env['ir.values'].sudo().set_default(
-			'dingtalk.config.settings', 'dingtalk_noncestr', self.noncestr)
-
-	@api.multi
 	def get_department_list(self):
-
-		dt = DingTalkClient()
+		dt = _get_client(self)
 		departments = dt.get_department_list()
 
 		depart_dic = {}

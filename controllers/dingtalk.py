@@ -2,6 +2,7 @@
 from odoo import http
 from odoo.http import request
 from dtclient import DingTalkClient
+from cache import Cache
 from werkzeug.utils import redirect
 import logging,time,json
 
@@ -14,24 +15,17 @@ class Dingtalk(http.Controller):
 		corpid = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_corpid')
 		corpsecret = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_corpsecret')
 		agentid = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_agentid')
-		noncestr = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_noncestr')
-		expirein = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_expirein')
-		access_token = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_access_token')
 
 		if not corpid or not corpsecret:
 			return redirect('/')
 
 		dt = DingTalkClient(corpid,corpsecret)
 		now = int(time.time());
-		if (now >= expirein):
-			access_token = dt.get_access_token()
-			request.env['ir.values'].sudo().set_default('dingtalk.config.settings', 'dingtalk_access_token',access_token)
-			request.env['ir.values'].sudo().set_default('dingtalk.config.settings', 'dingtalk_expirein',now+7000)
-		else:
-			dt.access_token = access_token
+		dt.get_access_token()
 		ticket= dt.get_jsapi_ticket()
-		url = 'http://erp.ifeige.cn/dingtalk/home'
-		sign = dt.sign(ticket,noncestr,now,url)
+		noncestr = 'dingtalk'
+		_logger.info(http.request.httprequest.url)
+		sign = dt.sign(ticket,noncestr,now,http.request.httprequest.url)
 		_logger.info(ticket)
 		config = {
 			'nonceStr': noncestr,
@@ -50,28 +44,30 @@ class Dingtalk(http.Controller):
 		if code:
 			corpid = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_corpid')
 			corpsecret = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_corpsecret')
-			access_token = request.env['ir.values'].sudo().get_default('dingtalk.config.settings', 'dingtalk_access_token')
-			expirein = request.env['ir.values'].sudo().get_default('dingtalk.config.settings',
-																	  'dingtalk_expirein')
+
 			if not corpid or not corpsecret:
 				return {'status':-1,'msg':'未配置企业corp id和secret'}
+
 			dt = DingTalkClient(corpid,corpsecret)
-			now = int(time.time());
-			if (now >= expirein):
-				access_token = dt.get_access_token()
-				request.env['ir.values'].sudo().set_default('dingtalk.config.settings', 'dingtalk_access_token',
-															accessToken)
-				request.env['ir.values'].sudo().set_default('dingtalk.config.settings', 'dingtalk_expirein', now+7000)
-			else:
-				dt.access_token = access_token
-			user = dt.get_user_info(code)
-			_logger.info(user)
-			data =  {
-				'status':0,
-				'msg':'ok',
-				'data':user
-			}
-			_logger.info(data)
+			c = Cache.factory()
+			if not c.get('access_token'):
+				dt.get_access_token()
+
+			if not request.uid:
+				request.uid = odoo.SUPERUSER_ID
+			try:
+				user = dt.get_user_info(code)
+				employee = request.env['hr.employee'].sudo().search([('dingtalk_userid', '=', user['userid'])])
+				if len(employee)  > 0 and employee.resource_id.user_id:
+					user = employee.resource_id.user_id
+					request.session.authenticate(request.session.db, user.login, user.password_crypt)
+					data = {'status':0,'msg':'登录成功'}
+				else:
+					data = {'status': -1, 'msg': '没有权限，请联系系统管理员设置'}
+			except Exception ,e:
+				_logger.exception("error : %s" % str(e))
+				data = {'status': -1, 'msg': str(e)}
+
 			return json.dumps(data)
 		else:
 			return redirect('/')
@@ -90,7 +86,6 @@ class Dingtalk(http.Controller):
 				return redirect('/')
 
 			dt = DingTalkClient(corpid,sso_secret)
-			dt.get_sso_token()
 			info = dt.get_sso_userinfo(code)
 			_logger.info(info)
 			return json.dumps(info)

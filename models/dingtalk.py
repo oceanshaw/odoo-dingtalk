@@ -22,7 +22,7 @@ def _get_client(obj):
 		dt = DingTalkClient()
 	return dt
 
-class DingDepartment(models.Model):
+class DingTalkDepartment(models.Model):
 	_inherit = "hr.department"
 
 	dingtalk_id = fields.Integer("钉钉ID", readonly=True)
@@ -39,7 +39,7 @@ class DingDepartment(models.Model):
 
 		for record in self:
 			if not record.dingtalk_id:
-				return
+				pass
 
 			department = dt.get_department_detail(record.dingtalk_id)
 			_logger.info(department)
@@ -56,7 +56,7 @@ class DingDepartment(models.Model):
 
 		for record in self:
 			if not record.parent_id or not record.parent_id.dingtalk_id:
-				return
+				pass
 
 			if record.dingtalk_id:
 				param = {
@@ -89,7 +89,7 @@ class DingDepartment(models.Model):
 
 		for record in self:
 			if not record.dingtalk_id:
-				return
+				pass
 
 			result = dt.get_user_list(record.dingtalk_id)
 			has_more = True
@@ -110,9 +110,8 @@ class DingDepartment(models.Model):
 
 
 
-
-class DingEmployee(models.Model):
-	_inherit = "hr.employee"
+class DingTalkUser(models.Model):
+	_inherit = 'hr.employee'
 
 	dingtalk_userid = fields.Char("钉钉唯一标识",readonly=True)
 	dingtalk_admin = fields.Boolean("管理员")
@@ -120,12 +119,10 @@ class DingEmployee(models.Model):
 	dingtalk_hide = fields.Boolean("隐藏")
 	dingtalk_leader = fields.Boolean("部门主管")
 
-
 	@api.multi
 	def dingtalk_create_employee(self):
 		"""创建成员"""
 		dt = _get_client(self)
-
 		for record in self:
 			if not record.dingtalk_userid and record.department_id and record.department_id.ding_id:
 				param = {
@@ -138,9 +135,10 @@ class DingEmployee(models.Model):
 				if result.get('errcode') == 0 and result.get('errmsg') in ['ok','created']:
 					record.dingtalk_userid = result['userid']
 
-			elif record.dingtalk_userid and record.name:
+
+			elif record.dingtalk_userid:
 				param = {
-					"name": record.name,
+					"name": record.employee_id.name,
 					"userid": record.dingtalk_userid,
 				}
 

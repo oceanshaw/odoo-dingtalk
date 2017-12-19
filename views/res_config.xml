@@ -16,7 +16,6 @@
 							<field name="corpsecret" />
 							<field name="sso_secret" />
 							<field name="agentid" />
-							<field name="noncestr"/>
 						</group>
 					</group>
 

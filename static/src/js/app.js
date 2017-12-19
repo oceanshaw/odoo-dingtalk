@@ -27,19 +27,20 @@ DingTalkPC.ready(function(res){
             console.log(crsf)
 	        $.ajax({
                 url: '/dingtalk/getuserinfo',
-                type:"GET",
-                data: {"crsf":crsf, "code":info.code},
+                type:"POST",
+                data: {"csrf_token":crsf, "code":info.code},
                 dataType:'json',
                 timeout: 900,
                 success: function (data) {
                     console.log(data)
+//                    DingtalkMessageAlert(data.msg)
 //                    var result = JSON.parse(data);
-                    window.location.href = '/'
-//                    if (result.status === 0) {
-//                        DingTalkPC.userid = result.data.userid;
-//                    } else {
-//                        DingtalkMessageAlert('自动授权失败，前往登录')
-//                    }
+
+                    if (data.status === 0) {
+                        window.location.href = '/web'
+                    } else {
+                        DingtalkMessageAlert(data.msg)
+                    }
 //                        DingTalkPC.biz.util.openLink({
 //                          url:"http://www.baidu.com",
 //                          onSuccess : function(result) {
